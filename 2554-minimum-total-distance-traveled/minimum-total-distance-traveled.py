@@ -1,34 +1,39 @@
+from collections import deque
+
 class Solution(object):
     def minimumTotalDistance(self, robot, factory):
-        # Sort positions to enable contiguous DP transitions
         robot.sort()
         factory.sort()
         
-        n = len(robot)
-        m = len(factory)
+        n, m = len(robot), len(factory)
+        # We use a 1D DP array to save space, representing dp[i] for the previous factory
+        dp = [0] + [float('inf')] * n
         
-        # dp[i][j] represents min distance for first i robots using first j factories
-        # Initialize with a very large value (float('inf'))
-        dp = [[float('inf')] * (m + 1) for _ in range(n + 1)]
-        
-        # Base case: 0 robots always cost 0 distance
-        for j in range(m + 1):
-            dp[0][j] = 0
+        for pos, limit in factory:
+            # cur_dp will store the results for the current factory
+            cur_dp = dp[:]
+            # dq stores pairs of (index, value)
+            dq = deque([(0, 0)])
             
-        for j in range(1, m + 1):
-            f_pos, f_limit = factory[j-1]
-            for i in range(n + 1):
-                # Option 1: Don't use the current factory at all for any new robots
-                dp[i][j] = dp[i][j-1]
+            prefix_sum = 0
+            for i in range(1, n + 1):
+                # Calculate the prefix distance sum for robots assigned to this factory
+                prefix_sum += abs(robot[i-1] - pos)
                 
-                # Option 2: Use current factory j to repair 'k' robots
-                current_dist = 0
-                for k in range(1, min(i, f_limit) + 1):
-                    # Robot indices are 0-based, so the k-th robot back is robot[i-k]
-                    current_dist += abs(robot[i-k] - f_pos)
-                    
-                    if dp[i-k][j-1] != float('inf'):
-                        dp[i][j] = min(dp[i][j], dp[i-k][j-1] + current_dist)
-                        
-        return dp[n][m]
-        
+                # Remove indices from deque that are outside the current factory's limit
+                if dq[0][0] < i - limit:
+                    dq.popleft()
+                
+                # The value we store in the deque is dp[i-k] - prefix_sum_of_k_robots
+                # This allows us to find the min cost efficiently
+                val = dp[i] - prefix_sum
+                while dq and dq[-1][1] >= val:
+                    dq.pop()
+                dq.append((i, val))
+                
+                # The min distance for cur_dp[i] is the best value in our window + current prefix_sum
+                cur_dp[i] = dq[0][1] + prefix_sum
+            
+            dp = cur_dp
+            
+        return dp[n]
