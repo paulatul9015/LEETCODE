@@ -5,10 +5,7 @@ class Solution(object):
         :rtype: List[int]
         """
         ans = []
-        for i in range (2):
-                
-
-            for n in nums:
+        for i  in range(2) :
+            for n in nums :
                 ans.append(n)
-
         return ans
