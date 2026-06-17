@@ -18,8 +18,6 @@ class Solution(object):
             if s[cookie_ptr] >= g[child_ptr]:
                 # The child is satisfied, move to the next child
                 child_ptr += 1
-                
-            
             # Greedily move to the next cookie in all cases
             cookie_ptr += 1
             
