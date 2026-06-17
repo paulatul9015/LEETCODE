@@ -19,6 +19,7 @@ class Solution(object):
                 # The child is satisfied, move to the next child
                 child_ptr += 1
                 
+            
             # Greedily move to the next cookie in all cases
             cookie_ptr += 1
             
