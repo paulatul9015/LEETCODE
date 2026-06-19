@@ -4,7 +4,7 @@ class Solution(object):
         :type gain: List[int]
         :rtype: int
         """
-        
+        #usinf prefix sum
         currentAlt = 0
         maxAlt = 0 
         for g in gain :
