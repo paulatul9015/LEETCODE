@@ -5,14 +5,12 @@ class Solution(object):
         :rtype: int
         """
         nums.sort()
-        max1 = float('-inf')
-        max2 = float('-inf')
+        maximum = 0
 
-        for num in nums:
-            if num > max1:
-                max2 = max1
-                max1 = num
-            elif num > max2:
-                max2 = num
-
-        return (max1 - 1) * (max2 - 1)
+        for i in range(len(nums) - 1):
+            for j in range(i + 1, len(nums)):
+                calc = (nums[i] - 1) * (nums[j] - 1)
+                if calc > maximum:
+                    maximum = calc
+        
+        return maximum
